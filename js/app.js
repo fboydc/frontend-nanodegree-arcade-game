@@ -3,7 +3,6 @@
 
 
 var Game = function() {
-	this.score = 0;
 	this.lost = false;
 	this.paused = false;
 	this.allEnemies = new Array();
@@ -31,13 +30,19 @@ Game.prototype.createEnemies = function(){
 
 
 Game.prototype.reset = function(){
+	game.render();
 	this.paused = false;
-	this.allEnemies = new Array();
+	//this.allEnemies = new Array();
 	this.player.reset();
-	this.createEnemies();
+	//this.createEnemies();
+}
+
+Game.prototype.restart = function(){
+	game = new Game();
 }
 
 Game.prototype.win = function(){
+	game.player.score += 10;
 	this.increaseDifficulty();
 	this.paused = true;
 
@@ -45,26 +50,31 @@ Game.prototype.win = function(){
 
 Game.prototype.increaseDifficulty = function(){
 	this.level += this.growthFactor;
-
-	switch(true){
-		case(this.level >= 151):
-			this.addEnemies(3);
-			break;
-
-
-	}
+	this.modifyEnemies();
+	
 
 }
 
-Game.prototype.addEnemies = function(num){
+Game.prototype.modifyEnemies = function(){
 	var x = 0;
 	var y = [60, 140, 220];
-	for(var i=0; i<num;i++){
+	this.allEnemies = new Array();
+	for(var i=0; i<3;i++){
 		this.allEnemies.push(new Enemy(x, y[i], Math.random()*(this.level+100 - this.level*0.70) + this.level*0.70));
 	}
 	console.log("Enemies size: "+this.allEnemies.length);
-	//this.allEnemies.push(new Enemy(x, y[i], Math.random()*(this.level+100 - this.level*0.70) + this.level*0.70)));
+	
 }
+
+Game.prototype.render = function(){
+	ctx.font = "30px Georgia";
+	ctx.fillStyle="white";
+	ctx.fillText("score: "+game.player.score, 20, 570);
+	ctx.fillStyle="white";
+	ctx.fillText("(lives) x "+game.player.lives, 350,570);
+}
+
+
 
 //Game.prototype.changeMonster = f
 
@@ -156,6 +166,7 @@ var Player = function() {
 	this.xspeed = 101;
 	this.yspeed = 82.50;
 	this.lives = 0;
+	this.score = 0;
 }
 
 Player.prototype.update = function(){
@@ -167,6 +178,7 @@ Player.prototype.update = function(){
 Player.prototype.render = function(){
 	ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 }
+
 
 Player.prototype.handleInput = function(code){
 	//console.log(code);
@@ -196,6 +208,7 @@ Player.prototype.reset = function(){
 }
 
 Player.prototype.die = function() {
+	this.lives--;
 	game.paused = true;
 
 }

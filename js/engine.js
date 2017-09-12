@@ -60,7 +60,14 @@ var Engine = (function(global) {
              */
             win.requestAnimationFrame(main);
         }else{
-                reset();
+        		if(game.player.lives < 0){
+        			game.restart();
+        			reset();
+        		}else {
+        			//game.render();
+        			reset();
+        		}
+                
         }
     }
 
@@ -157,6 +164,8 @@ var Engine = (function(global) {
         });
 
         game.player.render();
+        game.render();
+
     }
 
     /* This function does nothing but it could have been a good place to
