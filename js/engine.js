@@ -26,7 +26,8 @@ var Engine = (function(global) {
 
     canvas.width = 505;
     canvas.height = 606;
-    doc.body.appendChild(canvas);
+
+
 
     /* This function serves as the kickoff point for the game loop itself
      * and handles properly calling the update and render methods.
@@ -67,7 +68,7 @@ var Engine = (function(global) {
         			//game.render();
         			reset();
         		}
-                
+
         }
     }
 
@@ -76,7 +77,8 @@ var Engine = (function(global) {
      * game loop.
      */
     function init() {
-        //reset();
+        reset();
+        doc.body.appendChild(canvas);
         lastTime = Date.now();
         main();
     }
@@ -106,6 +108,11 @@ var Engine = (function(global) {
         game.allEnemies.forEach(function(enemy) {
             enemy.update(dt);
         });
+
+        game.collectibles.forEach(function(collectible){
+            collectible.update();
+        });
+
         game.player.update();
     }
 
@@ -144,6 +151,7 @@ var Engine = (function(global) {
                  * so that we get the benefits of caching these images, since
                  * we're using them over and over.
                  */
+                //ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 83);
                 ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 83);
             }
         }
@@ -164,7 +172,13 @@ var Engine = (function(global) {
         });
 
         game.player.render();
+
         game.render();
+        game.renderCollectibles();
+        game.renderObstacles();
+
+
+
 
     }
 
@@ -177,8 +191,14 @@ var Engine = (function(global) {
                     win.requestAnimationFrame(main);
                     game.paused = false;
                     game.reset();
-            }, 500);
+                    //game.renderCollec
+            }, 300);
     }
+
+
+
+
+
 
     /* Go ahead and load all of the images we know we're going to need to
      * draw our game level. Then set init as the callback method, so that when
@@ -189,17 +209,14 @@ var Engine = (function(global) {
         'images/water-block.png',
         'images/grass-block.png',
         'images/enemy-bug.png',
-        'images/zombie/walk-1.png',
-        'images/zombie/walk-2.png',
-        'images/zombie/walk-3.png',
-        'images/zombie/walk-4.png',
-        'images/zombie/walk-5.png',
-        'images/zombie/walk-6.png',
-        'images/zombie/walk-7.png',
-        'images/zombie/walk-8.png',
-        'images/zombie/walk-9.png',
-        'images/zombie/walk-10.png',
-        'images/char-boy.png'
+        'images/PixelCar.png',
+        'images/char-boy.png',
+        'images/rip.png',
+        'images/Heart.png',
+        'images/Rock.png',
+        'images/Gem Blue.png',
+        'images/Gem Green.png',
+        'images/Gem Orange.png'
     ]);
     Resources.onReady(init);
 
