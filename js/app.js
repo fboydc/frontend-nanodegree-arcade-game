@@ -22,7 +22,7 @@ var Enemy = function(x, y, speed) {
     // a helper we've provided to easily load images
 
     //this.sprite = 'images/enemy-bug.png';
-    this.sprite = 'images/enemy-bug.png';
+    this.sprite = 'images/PixelCar.png';
     this.x = x;
     this.y = y;
     this.speed = speed;
@@ -43,16 +43,21 @@ Enemy.prototype.update = function(dt) {
     	this.x += this.speed * dt;
 
     	if(this.x >= ctx.canvas.width){
-    		this.x = -100;
+    		this.x = -180;
     	}
     	//console.log(game);
 
-	    var diffx = Math.abs(this.x - game.player.x);
+	    var diffx = this.x - game.player.x;
     	var diffy = Math.abs(this.y - game.player.y);
 
-   		if(diffx < 80 && diffy < 20){
-   			game.player.die();
-   		}
+    	if((diffy < 40 && diffy > 0)&&((diffx<0 && diffx >-170)|| (diffx>0 && diffx<40))){
+    		//console.log("diff x: "+diffx);
+    		game.player.die();
+    	}
+
+   		/*if(diffx < 200 && diffy < 20){
+
+   		}*/
 
 
     }
@@ -67,8 +72,7 @@ Enemy.prototype.reset = function() {
 		this.paused = true;
 	});
 
-	allEnemies = new Array();
-	createEnemies();
+	this.createEnemies();
 
 }
 
@@ -107,16 +111,13 @@ var Game = function() {
 	this.player = new Player();
 	this.growthFactor = 50;
 	this.level = 1;
-	this.enemyLane_1 = 60;
-	this.enemyLane_2 = 140;
-	this.enemyLane_3 = 220;
-	/*this.enemyLane_1 = 140;
-	this.enemyLane_2 = 220;
-	this.enemyLane_3 = 300;*/
-	this.createEnemies();
+	this.enemyLane_1 = 126;
+	this.enemyLane_2 = 209;
+	this.enemyLane_3 = 290;
+	//this.createEnemies();
 	this.collectibles = new Array();
 	this.obstacles = new Array();
-	this.victorySound = new Audio('sounds/zelda-secret.mp3');
+	this.victorySound = new Audio('sounds/water-splash.mp3');
 	this.render();
 	this.objectsLocations = [
 								[0,60],[101,60],[202, 60],[303,60], [404,60],
@@ -141,13 +142,12 @@ Game.prototype.createEnemies = function(){
 Game.prototype.reset = function(){
 
 	this.paused = false;
-	this.player.reset();
 
+	this.player.reset();
+	this.allEnemies = new Array();
 	this.generateObstacles();
 	this.generateCollectibles();
-
-
-	//this.createEnemies();
+	this.createEnemies();
 }
 
 Game.prototype.restart = function(){
@@ -155,9 +155,12 @@ Game.prototype.restart = function(){
 }
 
 Game.prototype.win = function(){
+	this.player.y = 50;
 	this.victorySound.play();
 	this.player.score += 10;
 	this.increaseDifficulty();
+	this.allEnemies = new Array();
+	this.player.sprite = "images/animations/boy-victory.png";
 	this.paused = true;
 
 }
@@ -271,7 +274,7 @@ Game.prototype.generateObstacles = function(){
 
 	switch(true){
 		case (this.level > 300):
-				this.obstaclesGenerator(Math.random() *(5-1) + 1);
+				this.obstaclesGenerator(Math.random() *(4-1) + 1);
 				break;
 		case(this.level > 120):
 				this.obstaclesGenerator(Math.random() *(2-1) + 1);
@@ -305,18 +308,30 @@ Game.prototype.renderObstacles = function(){
 var Player = function() {
 	this.reset();
 	this.xspeed = 101;
-	this.yspeed = 80;
+	this.yspeed = 83;
 	this.lives = 2;
 	this.score = 0;
 	this.character;
+	this.tickCount = 0;
+	this.ticksPerFrame = 0.5;
+	this.spriteNum = 1;
+	this.move = false;
+	this.direction = "up";
+	this.deadSound = new Audio("sounds/splat.mp3");
 }
 
 Player.prototype.update = function(){
 
-	if(this.y < 0){
-		console.log(this.y);
-		game.win();
-	}
+		if(this.move){
+			this.animate();
+		}
+
+		if(this.y < 88){
+			console.log(this.y);
+			game.win();
+		}
+
+
 }
 
 Player.prototype.render = function(){
@@ -325,21 +340,37 @@ Player.prototype.render = function(){
 
 
 Player.prototype.handleInput = function(code){
-	//console.log(code);
+	this.move = true;
 		switch(code) {
 			case 'left':
 				if(this.x > 0 && this.isBlocked('left')){
-					this.x -= this.xspeed;
+					this.move = true;
+					this.direction = "left";
+					for(var i = 0; i < this.xspeed; i++){
+						this.x --;
+					}
+
 				}
 				break;
 			case 'up':
+				this.logPosition();
 				if(this.isBlocked('up')){
-					this.y -= this.yspeed;
+					this.move = true;
+					this.direction = "up";
+					for(var i = 0; i < this.yspeed; i++){
+						this.y --;
+					}
+
 				}
 				break;
 			case 'right':
 				if(this.x < 402 && this.isBlocked('right')){
-					this.x += this.xspeed;
+					this.move = true;
+					this.direction = "right"
+					for(var i = 0; i < this.xspeed; i++){
+						this.x ++;
+					}
+					//this.x += this.xspeed;
 				}
 				break;
 			case 'down':
@@ -349,7 +380,56 @@ Player.prototype.handleInput = function(code){
 				break;
 
 		}
+
 	}
+
+
+Player.prototype.animate = function(){
+
+		this.tickCount +=1;
+
+		if(this.spriteNum > 7){
+			this.spriteNum = 1;
+			this.move = false;
+		}
+
+
+		if(this.tickCount > this.ticksPerFrame) {
+			this.tickCount = 0;
+			switch(this.direction){
+				case "up":
+						this.sprite = "images/animations/move-up/boy-up-"+this.spriteNum+".png";
+						break;
+				case "right":
+						this.sprite = "images/animations/move-right/boy-right-"+this.spriteNum+".png";
+						break;
+				case "left":
+						this.sprite = "images/animations/move-left/boy-left-"+this.spriteNum+".png";
+						break;
+
+			}
+
+		}
+
+		this.spriteNum++;
+
+
+}
+
+
+
+Player.prototype.logPosition = function(){
+	console.log("player x: "+this.x);
+	console.log("player y: "+this.y);
+
+	for(var i=0; i < game.collectibles.length; i++){
+		//console.log("enemy "+i+" x: "+game.allEnemies[i].x);
+		console.log("diff collectibles "+i+" y: "+(this.y - game.collectibles[i].y));
+
+	}
+
+
+}
 
 
 Player.prototype.isBlocked = function(direction){
@@ -357,28 +437,30 @@ Player.prototype.isBlocked = function(direction){
 	switch(direction){
 		case 'right':
 			for(var i=0; i<game.obstacles.length; i++){
-				if(game.obstacles[i].x - this.x === 101 && game.obstacles[i].y - this.y === 0){
+				if(game.obstacles[i].x - this.x === 101 && ( game.obstacles[i].y - this.y === -28 || game.obstacles[i].y - this.y === -31 || game.obstacles[i].y - this.y === -34)){
 						move = false;
 				}
 			}
 			break;
 		case 'left':
 			for(var i=0; i<game.obstacles.length; i++){
-				if(this.x - game.obstacles[i].x === 101 && game.obstacles[i].y - this.y === 0){
+				if(this.x - game.obstacles[i].x === 101 && ( game.obstacles[i].y - this.y === -28 || game.obstacles[i].y - this.y === -31 || game.obstacles[i].y - this.y === -34)){
+						console.log(game.obstacles[i].y - this.y);
 						move = false;
 				}
 			}
 			break;
 		case 'up':
 			for(var i=0; i<game.obstacles.length; i++){
-				if(this.y - game.obstacles[i].y === 80 && game.obstacles[i].x - this.x === 0){
+				if(Math.abs(game.obstacles[i].x - this.x) === 0 &&(Math.abs(game.obstacles[i].y - this.y) === 111 || Math.abs(game.obstacles[i].y - this.y) === 114 || Math.abs(game.obstacles[i].y - this.y) === 117)){
 					move = false;
 				}
 			}
 			break;
+
 		case 'down':
 			for(var i=0; i<game.obstacles.length; i++){
-				if(game.obstacles[i].y - this.y  === 80 && game.obstacles[i].x - this.x === 0){
+				if(Math.abs(game.obstacles[i].x - this.x) === 0 && (Math.abs(game.obstacles[i].y - this.y) === 49 || Math.abs(game.obstacles[i].y - this.y) === 52)){
 					move = false;
 				}
 			}
@@ -390,15 +472,15 @@ Player.prototype.isBlocked = function(direction){
 }
 
 Player.prototype.reset = function(){
-		this.sprite = 'images/char-boy.png';
+		this.sprite = 'images/boy.png';
 		this.x = 0;
-		this.y = 380;
+		this.y = 420;
 }
 
 
 
 Player.prototype.die = function() {
-	this.sprite = "images/rip.png";
+	this.deadSound.play();
 	this.lives--;
 	game.paused = true;
 
@@ -432,7 +514,8 @@ var Collectible = function(x, y, sprite, type, value){
 
 
 Collectible.prototype.update = function(){
-	if(this.x === game.player.x && this.y === game.player.y){
+
+	if(this.x === game.player.x && (game.player.y - this.y === 28 || game.player.y - this.y === 31 || game.player.y - this.y === 34)){
 		switch(this.type){
 			case 'health':
 				game.player.lives += this.value;
@@ -458,6 +541,7 @@ Collectible.prototype.render = function(){
 
 
 var Heart = function(coord){
+	//Collectible.call(this, coord[0], coord[1], 'images/Heart.png', "health", 1);
 	Collectible.call(this, coord[0], coord[1], 'images/Heart.png', "health", 1);
 	this.weight = 5;
 	this.audio = new Audio('sounds/mushroom-effect.mp3');
@@ -469,7 +553,8 @@ Heart.prototype.constructor = Collectible;
 
 
 var BlueGem = function(coord){
-	Collectible.call(this, coord[0], coord[1], 'images/Gem Blue.png', "scoreBoost", 45);
+	//Collectible.call(this, coord[0], coord[1], 'images/Gem Blue.png', "scoreBoost", 45);
+	Collectible.call(this, coord[0], coord[1], 'images/fruits/apple.png', "scoreBoost", 45);
 	this.weight = 2;
 	this.audio = new Audio('sounds/tasty.mp3');
 }
@@ -480,7 +565,8 @@ BlueGem.prototype.constructor = Collectible;
 
 var GreenGem = function(coord){
 
-	Collectible.call(this, coord[0], coord[1], 'images/Gem Green.png', "scoreBoost", 90);
+	//Collectible.call(this, coord[0], coord[1], 'images/Gem Green.png', "scoreBoost", 90);
+	Collectible.call(this, coord[0], coord[1], 'images/fruits/whortleberry.png', "scoreBoost", 90);
 	this.weight = 2;
 	this.audio = new Audio('sounds/divine.mp3');
 }
@@ -489,7 +575,8 @@ GreenGem.prototype = Object.create(Collectible.prototype);
 GreenGem.prototype.constructor = Collectible;
 
 var OrangeGem = function(coord){
-	Collectible.call(this, coord[0], coord[1], 'images/Gem Orange.png', "scoreBoost", 250);
+	//Collectible.call(this, coord[0], coord[1], 'images/Gem Orange.png', "scoreBoost", 250);
+	Collectible.call(this, coord[0], coord[1], 'images/fruits/banana.png', "scoreBoost", 250);
 	this.weight = 1;
 	this.audio = new Audio('sounds/delicious.mp3');
 }

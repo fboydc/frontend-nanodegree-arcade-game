@@ -22,7 +22,7 @@ var Engine = (function(global) {
         win = global.window,
         canvas = doc.createElement('canvas'),
         ctx = canvas.getContext('2d'),
-        lastTime;
+        lastTime, processID;
 
     canvas.width = 505;
     canvas.height = 606;
@@ -59,14 +59,19 @@ var Engine = (function(global) {
             /* Use the browser's requestAnimationFrame function to call this
              * function again as soon as the browser is able to draw another frame.
              */
-            win.requestAnimationFrame(main);
+            processID = win.requestAnimationFrame(main);
         }else{
         		if(game.player.lives < 0){
+                    gover = new Audio('sounds/game-over.mp3');
+                    gover.play();
         			game.restart();
         			reset();
         		}else {
         			//game.render();
-        			reset();
+                    //init();
+
+                    win.cancelAnimationFrame(processID);
+                    reset();
         		}
 
         }
@@ -171,11 +176,12 @@ var Engine = (function(global) {
             enemy.render();
         });
 
-        game.player.render();
+
 
         game.render();
         game.renderCollectibles();
         game.renderObstacles();
+         game.player.render();
 
 
 
@@ -187,6 +193,7 @@ var Engine = (function(global) {
      * those sorts of things. It's only called once by the init() method.
      */
     function reset() {
+
         setTimeout(function(){
                     win.requestAnimationFrame(main);
                     game.paused = false;
@@ -210,10 +217,40 @@ var Engine = (function(global) {
         'images/grass-block.png',
         'images/enemy-bug.png',
         'images/PixelCar.png',
+        'images/Car.png',
         'images/char-boy.png',
+        'images/boy.png',
+        'images/animations/boy-victory.png',
+        'images/animations/move-up/boy-up-1.png',
+        'images/animations/move-up/boy-up-2.png',
+        'images/animations/move-up/boy-up-3.png',
+        'images/animations/move-up/boy-up-4.png',
+        'images/animations/move-up/boy-up-5.png',
+        'images/animations/move-up/boy-up-6.png',
+        'images/animations/move-up/boy-up-7.png',
+        'images/animations/move-right/boy-right-1.png',
+        'images/animations/move-right/boy-right-2.png',
+        'images/animations/move-right/boy-right-3.png',
+        'images/animations/move-right/boy-right-4.png',
+        'images/animations/move-right/boy-right-5.png',
+        'images/animations/move-right/boy-right-6.png',
+        'images/animations/move-right/boy-right-7.png',
+        'images/animations/move-left/boy-left-1.png',
+        'images/animations/move-left/boy-left-2.png',
+        'images/animations/move-left/boy-left-3.png',
+        'images/animations/move-left/boy-left-4.png',
+        'images/animations/move-left/boy-left-5.png',
+        'images/animations/move-left/boy-left-6.png',
+        'images/animations/move-left/boy-left-7.png',
+        'images/fruits/apple.png',
+        'images/fruits/applejack.png',
+        'images/fruits/awesome_stew.png',
+        'images/fruits/banana.png',
+        'images/fruits/whortleberry.png',
         'images/rip.png',
         'images/Heart.png',
         'images/Rock.png',
+        'images/key.png',
         'images/Gem Blue.png',
         'images/Gem Green.png',
         'images/Gem Orange.png'
