@@ -39,7 +39,7 @@ var Engine = (function(global) {
          * would be the same for everyone (regardless of how fast their
          * computer is) - hurray time!
          */
-         //console.log(game.paused);
+
         if(!game.paused){
 
             var now = Date.now(),
@@ -216,17 +216,32 @@ var Engine = (function(global) {
         'images/water-block.png',
         'images/grass-block.png',
         'images/PixelCar.png',
-        'images/Car.png',
         'images/char-boy.png',
-        'images/boy.png',
+        'images/animations/move-right/boy-right.png',
+        'images/animations/move-right/girl-right.png',
+        'images/animations/move-right/elf-right.png',
+        'images/animations/move-left/boy-left.png',
+        'images/animations/move-left/girl-left.png',
+        'images/animations/move-left/elf-left.png',
+        'images/animations/move-up/boy-up.png',
+        'images/animations/move-up/girl-up.png',
+        'images/animations/move-up/elf-up.png',
+        'images/animations/move-down/boy-down.png',
+        'images/animations/move-down/girl-down.png',
+        'images/animations/move-down/elf-down.png',
         'images/animations/boy-victory.png',
+        'images/animations/girl-victory.png',
+        'images/animations/elf-victory.png',
+        'images/animations/boy-dead.png',
+        'images/animations/girl-dead.png',
+        'images/animations/elf-dead.png',
         'images/fruits/apple.png',
         'images/fruits/applejack.png',
         'images/fruits/banana.png',
         'images/fruits/whortleberry.png',
         'images/rip.png',
         'images/Heart.png',
-        'images/Rock.png',
+        'images/Rock.png'
     ]);
     Resources.onReady(init);
 

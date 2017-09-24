@@ -1,4 +1,5 @@
 
+
 var Game = function() {
 	this.lost = false;
 	this.paused = false;
@@ -54,7 +55,7 @@ Game.prototype.win = function(){
 	this.player.score += 10;
 	this.increaseDifficulty();
 	this.allEnemies = new Array();
-	this.player.sprite = "images/animations/boy-victory.png";
+	this.player.sprite = "images/animations/"+this.player.character+"-victory.png";
 	this.paused = true;
 
 }
@@ -102,9 +103,9 @@ Game.prototype.generateCollectibles = function(){
 	var collectibles = new Array();
 
 	collectibles.push(new Heart(this.objectsLocations[Math.floor(Math.random()*this.objectsLocations.length)]));
-	collectibles.push(new BlueGem(this.objectsLocations[Math.floor(Math.random()*this.objectsLocations.length)]));
-	collectibles.push(new GreenGem(this.objectsLocations[Math.floor(Math.random()*this.objectsLocations.length)]));
-	collectibles.push(new OrangeGem(this.objectsLocations[Math.floor(Math.random()*this.objectsLocations.length)]));
+	collectibles.push(new Apple(this.objectsLocations[Math.floor(Math.random()*this.objectsLocations.length)]));
+	collectibles.push(new Berry(this.objectsLocations[Math.floor(Math.random()*this.objectsLocations.length)]));
+	collectibles.push(new Banana(this.objectsLocations[Math.floor(Math.random()*this.objectsLocations.length)]));
 	if((Math.floor(Math.random()*2)+1)> 1){
 		var weights = this.weightsCDF(collectibles);
 		var collectible = collectibles[this.weightsBisection(collectibles, weights)];
@@ -234,8 +235,7 @@ Enemy.prototype.update = function(dt) {
 	    var diffx = this.x - game.player.x;
     	var diffy = Math.abs(this.y - game.player.y);
 
-    	if((diffy < 40 && diffy > 0)&&((diffx<0 && diffx >-170)|| (diffx>0 && diffx<40))){
-    		//console.log("diff x: "+diffx);
+    	if((diffy < 40 && diffy > 0)&&((diffx<0 && diffx >-155)|| (diffx>0 && diffx<40))){
     		game.player.die();
     	}
 
@@ -276,30 +276,16 @@ Enemy.prototype.render = function() {
 
 
 
-
-
-
-
-/*******************************************
-subClass Name: Heart
-******************************************/
-
-
-
-
-
-
-
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
 var Player = function() {
-	this.reset();
 	this.xspeed = 101;
 	this.yspeed = 83;
 	this.lives = 2;
 	this.score = 0;
-	this.character;
+	this.character = "boy";
+	this.reset();
 	this.move = false;
 	this.deadSound = new Audio("sounds/splat.mp3");
 }
@@ -314,7 +300,7 @@ Player.prototype.update = function(){
 
 }
 
-Player.prototype.render = function(){
+Player.prototype.render = function(){	
 	ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 }
 
@@ -325,9 +311,8 @@ Player.prototype.handleInput = function(code){
 			case 'left':
 				if(this.x > 0 && this.isBlocked('left')){
 					this.move = true;
-					for(var i = 0; i < this.xspeed; i++){
-						this.x --;
-					}
+					this.changeDirection("left");
+					this.x -= this.xspeed;
 
 				}
 				break;
@@ -335,22 +320,22 @@ Player.prototype.handleInput = function(code){
 				this.logPosition();
 				if(this.isBlocked('up')){
 					this.move = true;
-					for(var i = 0; i < this.yspeed; i++){
-						this.y --;
-					}
+					this.changeDirection("up");
+					this.y -= this.yspeed;
 
 				}
 				break;
 			case 'right':
 				if(this.x < 402 && this.isBlocked('right')){
 					this.move = true;
-					for(var i = 0; i < this.xspeed; i++){
-						this.x ++;
-					}
+					this.changeDirection("right");
+					this.x += this.xspeed
 				}
 				break;
 			case 'down':
 				if(this.y < 380 && this.isBlocked('down')){
+					this.move = true;
+					this.changeDirection("down");
 					this.y += this.yspeed;
 				}
 				break;
@@ -360,36 +345,21 @@ Player.prototype.handleInput = function(code){
 	}
 
 
-Player.prototype.animate = function(){
-
-		this.tickCount +=1;
-
-		if(this.spriteNum > 7){
-			this.spriteNum = 1;
-			this.move = false;
-		}
-
-
-		if(this.tickCount > this.ticksPerFrame) {
-			this.tickCount = 0;
-			switch(this.direction){
-				case "up":
-						this.sprite = "images/animations/move-up/boy-up-"+this.spriteNum+".png";
-						break;
-				case "right":
-						this.sprite = "images/animations/move-right/boy-right-"+this.spriteNum+".png";
-						break;
-				case "left":
-						this.sprite = "images/animations/move-left/boy-left-"+this.spriteNum+".png";
-						break;
-
-			}
-
-		}
-
-		this.spriteNum++;
-
-
+Player.prototype.changeDirection = function(direction){
+	switch(direction){
+		case "right":
+				this.sprite = "images/animations/move-right/"+this.character+"-right.png";
+				break;
+		case "left":
+				this.sprite = "images/animations/move-left/"+this.character+"-left.png";
+				break;
+		case "up":
+				this.sprite = "images/animations/move-up/"+this.character+"-up.png";
+				break;
+		case "down":
+				this.sprite ="images/animations/move-down/"+this.character+"-down.png";
+				break;
+	}
 }
 
 
@@ -448,7 +418,7 @@ Player.prototype.isBlocked = function(direction){
 }
 
 Player.prototype.reset = function(){
-		this.sprite = 'images/boy.png';
+		this.sprite = "images/animations/move-up/"+this.character+"-up.png";
 		this.x = 0;
 		this.y = 420;
 }
@@ -457,6 +427,7 @@ Player.prototype.reset = function(){
 
 Player.prototype.die = function() {
 	this.deadSound.play();
+	this.sprite ="images/animations/"+this.character+"-dead.png";
 	this.lives--;
 	game.paused = true;
 
@@ -476,6 +447,8 @@ Obstacle.prototype.render = function(){
 	ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 
 }
+
+
 
 
 var Collectible = function(x, y, sprite, type, value){
@@ -528,7 +501,7 @@ Heart.prototype = Object.create(Collectible.prototype);
 Heart.prototype.constructor = Collectible;
 
 
-var BlueGem = function(coord){
+var Apple = function(coord){
 	//Collectible.call(this, coord[0], coord[1], 'images/Gem Blue.png', "scoreBoost", 45);
 	Collectible.call(this, coord[0], coord[1], 'images/fruits/apple.png', "scoreBoost", 45);
 	this.weight = 2;
@@ -536,10 +509,10 @@ var BlueGem = function(coord){
 }
 
 
-BlueGem.prototype = Object.create(Collectible.prototype);
-BlueGem.prototype.constructor = Collectible;
+Apple.prototype = Object.create(Collectible.prototype);
+Apple.prototype.constructor = Collectible;
 
-var GreenGem = function(coord){
+var Berry = function(coord){
 
 	//Collectible.call(this, coord[0], coord[1], 'images/Gem Green.png', "scoreBoost", 90);
 	Collectible.call(this, coord[0], coord[1], 'images/fruits/whortleberry.png', "scoreBoost", 90);
@@ -547,10 +520,10 @@ var GreenGem = function(coord){
 	this.audio = new Audio('sounds/divine.mp3');
 }
 
-GreenGem.prototype = Object.create(Collectible.prototype);
-GreenGem.prototype.constructor = Collectible;
+Berry.prototype = Object.create(Collectible.prototype);
+Berry.prototype.constructor = Collectible;
 
-var OrangeGem = function(coord){
+var Banana = function(coord){
 	//Collectible.call(this, coord[0], coord[1], 'images/Gem Orange.png', "scoreBoost", 250);
 	Collectible.call(this, coord[0], coord[1], 'images/fruits/banana.png', "scoreBoost", 250);
 	this.weight = 1;
@@ -558,8 +531,8 @@ var OrangeGem = function(coord){
 }
 
 
-OrangeGem.prototype = Object.create(Collectible.prototype);
-OrangeGem.prototype.constructor = Collectible;
+Banana.prototype = Object.create(Collectible.prototype);
+Banana.prototype.constructor = Collectible;
 
 
 
