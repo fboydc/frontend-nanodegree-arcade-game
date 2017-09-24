@@ -95,7 +95,7 @@ Game.prototype.render = function(){
 
 /***********************************************
 
-
+asdfasdfasdf
 ************************************************/
 
 Game.prototype.generateCollectibles = function(){
