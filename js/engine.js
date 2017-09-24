@@ -83,7 +83,7 @@ var Engine = (function(global) {
      */
     function init() {
         reset();
-        doc.body.appendChild(canvas);
+        doc.getElementById("container").appendChild(canvas);
         lastTime = Date.now();
         main();
     }
@@ -215,45 +215,18 @@ var Engine = (function(global) {
         'images/stone-block.png',
         'images/water-block.png',
         'images/grass-block.png',
-        'images/enemy-bug.png',
         'images/PixelCar.png',
         'images/Car.png',
         'images/char-boy.png',
         'images/boy.png',
         'images/animations/boy-victory.png',
-        'images/animations/move-up/boy-up-1.png',
-        'images/animations/move-up/boy-up-2.png',
-        'images/animations/move-up/boy-up-3.png',
-        'images/animations/move-up/boy-up-4.png',
-        'images/animations/move-up/boy-up-5.png',
-        'images/animations/move-up/boy-up-6.png',
-        'images/animations/move-up/boy-up-7.png',
-        'images/animations/move-right/boy-right-1.png',
-        'images/animations/move-right/boy-right-2.png',
-        'images/animations/move-right/boy-right-3.png',
-        'images/animations/move-right/boy-right-4.png',
-        'images/animations/move-right/boy-right-5.png',
-        'images/animations/move-right/boy-right-6.png',
-        'images/animations/move-right/boy-right-7.png',
-        'images/animations/move-left/boy-left-1.png',
-        'images/animations/move-left/boy-left-2.png',
-        'images/animations/move-left/boy-left-3.png',
-        'images/animations/move-left/boy-left-4.png',
-        'images/animations/move-left/boy-left-5.png',
-        'images/animations/move-left/boy-left-6.png',
-        'images/animations/move-left/boy-left-7.png',
         'images/fruits/apple.png',
         'images/fruits/applejack.png',
-        'images/fruits/awesome_stew.png',
         'images/fruits/banana.png',
         'images/fruits/whortleberry.png',
         'images/rip.png',
         'images/Heart.png',
         'images/Rock.png',
-        'images/key.png',
-        'images/Gem Blue.png',
-        'images/Gem Green.png',
-        'images/Gem Orange.png'
     ]);
     Resources.onReady(init);
 

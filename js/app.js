@@ -1,109 +1,4 @@
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Enemies our player must avoid
-var Enemy = function(x, y, speed) {
-    // Variables applied to each of our instances go here,
-    // we've provided one for you to get started
-
-    // The image/sprite for our enemies, this uses
-    // a helper we've provided to easily load images
-
-    //this.sprite = 'images/enemy-bug.png';
-    this.sprite = 'images/PixelCar.png';
-    this.x = x;
-    this.y = y;
-    this.speed = speed;
-    this.paused = false;
-    this.frame = 1;
-};
-
-// Update the enemy's position, required method for game
-// Parameter: dt, a time delta between ticks
-Enemy.prototype.update = function(dt) {
-    // You should multiply any movement by the dt parameter
-    // which will ensure the game runs at the same speed for
-    // all computers.
-    if (!this.paused) {
-
-
-
-    	this.x += this.speed * dt;
-
-    	if(this.x >= ctx.canvas.width){
-    		this.x = -180;
-    	}
-    	//console.log(game);
-
-	    var diffx = this.x - game.player.x;
-    	var diffy = Math.abs(this.y - game.player.y);
-
-    	if((diffy < 40 && diffy > 0)&&((diffx<0 && diffx >-170)|| (diffx>0 && diffx<40))){
-    		//console.log("diff x: "+diffx);
-    		game.player.die();
-    	}
-
-   		/*if(diffx < 200 && diffy < 20){
-
-   		}*/
-
-
-    }
-
-};
-
-
-
-Enemy.prototype.reset = function() {
-
-	allEnemies.forEach(function(){
-		this.paused = true;
-	});
-
-	this.createEnemies();
-
-}
-
-
-
-// Draw the enemy on the screen, required method for game
-Enemy.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*******************************************
-subClass Name: Heart
-******************************************/
-
-
-
-
-
 var Game = function() {
 	this.lost = false;
 	this.paused = false;
@@ -114,7 +9,6 @@ var Game = function() {
 	this.enemyLane_1 = 126;
 	this.enemyLane_2 = 209;
 	this.enemyLane_3 = 290;
-	//this.createEnemies();
 	this.collectibles = new Array();
 	this.obstacles = new Array();
 	this.victorySound = new Audio('sounds/water-splash.mp3');
@@ -302,6 +196,100 @@ Game.prototype.renderObstacles = function(){
 }
 
 
+
+
+var Enemy = function(x, y, speed) {
+    // Variables applied to each of our instances go here,
+    // we've provided one for you to get started
+
+    // The image/sprite for our enemies, this uses
+    // a helper we've provided to easily load images
+
+    //this.sprite = 'images/enemy-bug.png';
+    this.sprite = 'images/PixelCar.png';
+    this.x = x;
+    this.y = y;
+    this.speed = speed;
+    this.paused = false;
+    this.frame = 1;
+};
+
+// Update the enemy's position, required method for game
+// Parameter: dt, a time delta between ticks
+Enemy.prototype.update = function(dt) {
+    // You should multiply any movement by the dt parameter
+    // which will ensure the game runs at the same speed for
+    // all computers.
+    if (!this.paused) {
+
+
+
+    	this.x += this.speed * dt;
+
+    	if(this.x >= ctx.canvas.width){
+    		this.x = -180;
+    	}
+    	//console.log(game);
+
+	    var diffx = this.x - game.player.x;
+    	var diffy = Math.abs(this.y - game.player.y);
+
+    	if((diffy < 40 && diffy > 0)&&((diffx<0 && diffx >-170)|| (diffx>0 && diffx<40))){
+    		//console.log("diff x: "+diffx);
+    		game.player.die();
+    	}
+
+   		/*if(diffx < 200 && diffy < 20){
+
+   		}*/
+
+
+    }
+
+};
+
+
+
+Enemy.prototype.reset = function() {
+
+	allEnemies.forEach(function(){
+		this.paused = true;
+	});
+
+	this.createEnemies();
+
+}
+
+
+
+// Draw the enemy on the screen, required method for game
+Enemy.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*******************************************
+subClass Name: Heart
+******************************************/
+
+
+
+
+
+
+
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
@@ -312,19 +300,11 @@ var Player = function() {
 	this.lives = 2;
 	this.score = 0;
 	this.character;
-	this.tickCount = 0;
-	this.ticksPerFrame = 0.5;
-	this.spriteNum = 1;
 	this.move = false;
-	this.direction = "up";
 	this.deadSound = new Audio("sounds/splat.mp3");
 }
 
 Player.prototype.update = function(){
-
-		if(this.move){
-			this.animate();
-		}
 
 		if(this.y < 88){
 			console.log(this.y);
@@ -345,7 +325,6 @@ Player.prototype.handleInput = function(code){
 			case 'left':
 				if(this.x > 0 && this.isBlocked('left')){
 					this.move = true;
-					this.direction = "left";
 					for(var i = 0; i < this.xspeed; i++){
 						this.x --;
 					}
@@ -356,7 +335,6 @@ Player.prototype.handleInput = function(code){
 				this.logPosition();
 				if(this.isBlocked('up')){
 					this.move = true;
-					this.direction = "up";
 					for(var i = 0; i < this.yspeed; i++){
 						this.y --;
 					}
@@ -366,11 +344,9 @@ Player.prototype.handleInput = function(code){
 			case 'right':
 				if(this.x < 402 && this.isBlocked('right')){
 					this.move = true;
-					this.direction = "right"
 					for(var i = 0; i < this.xspeed; i++){
 						this.x ++;
 					}
-					//this.x += this.xspeed;
 				}
 				break;
 			case 'down':
