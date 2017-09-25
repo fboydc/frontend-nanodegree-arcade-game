@@ -1,5 +1,39 @@
+/****************************************************************************
+*AUTHOR: FELIPE BOYD
+*DESCRIPTION: 
+*
+*
+*
+*
+*
+*
+*
+****************************************************************************
 
 
+
+
+
+/**************************************************************************
+CLASS: Game
+DESCRIPTION: 
+A game represents...
+PROPERTIES:
+lost - type: boolean 
+	   description: this property is used to indicate the main function,
+	                when to restart the game once player.lives reaches a value
+	                of 0.
+
+paused - type: boolean
+	     description: this property is used for temporarily exiting out of the
+	                  requestAnimationFrame loop, creating a short pause between
+	                  the win/loose phase of the game.
+
+allEnemies - 
+
+
+
+*************************************************************************/
 var Game = function() {
 	this.lost = false;
 	this.paused = false;
@@ -288,6 +322,7 @@ var Player = function() {
 	this.reset();
 	this.move = false;
 	this.deadSound = new Audio("sounds/splat.mp3");
+	this.grassStep = new Audio("sounds/footstep-grass.wav");
 }
 
 Player.prototype.update = function(){
@@ -307,6 +342,7 @@ Player.prototype.render = function(){
 
 Player.prototype.handleInput = function(code){
 	this.move = true;
+	this.grassStep.play();
 		switch(code) {
 			case 'left':
 				if(this.x > 0 && this.isBlocked('left')){
@@ -561,3 +597,5 @@ document.addEventListener('keyup', function(e) {
 
     game.player.handleInput(allowedKeys[e.keyCode]);
 });
+
+
