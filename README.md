@@ -37,7 +37,13 @@ unfortunately, there isn't any database set for this project. However I promise 
 ------------------------------------------------------------------------------
 ## HOW DO I RUN IT?
 ------------------------------------------------------------------------------
-Simple, just double click on index.html and you are all set: your browser will open this file and start the game for you.
+
+If you download the source code, it's simple: just double click on index.html and you are all set: your browser will open this file and start the game for you.
+
+### Demo
+Go [here](https://fboydc.github.io/frontend-nanodegree-arcade-game/) and check it out.
+
+
 
 
 ------------------------------------------------------------------------------
